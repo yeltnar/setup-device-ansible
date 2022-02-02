@@ -1,0 +1,49 @@
+---
+- name: F
+  hosts: linux 
+  
+  tasks:
+    # install cli programs
+    - name: Install git, curl, jq, tmux, neovim, pip
+      package: 
+        name: 
+         - git # can add more with dash in front
+         - curl  
+         - jq  
+         - tmux  
+         - neovim  
+         - pip  
+        update_cache: true
+        state: present
+      become: true
+
+    # install nodejs
+    - name: install nvm
+      shell: 
+        cmd: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+        creates: "/home/pi/.nvm"
+    - name: install node
+      shell: 
+        cmd: source /home/pi/.nvm/nvm.sh && nvm install 14 && nvm use 14
+        executable: /bin/bash
+        creates: /home/pi/.nvm/versions/node/v14.18.3 # TODO make this dynamic 
+
+    # install global npm packages
+    - name: Install global install bitwarden cli
+      shell: 
+        cmd: "source /home/pi/.nvm/nvm.sh && npm i -g @bitwarden/cli"
+        executable: /bin/bash
+        creates: /home/pi/.nvm/versions/node/v14.18.3/bin/bw
+
+    - name: Install custom bashrc
+      shell:
+        cmd: "curl -L setup.andbrant.com | bash"
+        executable: "/bin/bash"
+        creates: "~/playin/custom_bashrc"
+
+
+
+
+
+
+
